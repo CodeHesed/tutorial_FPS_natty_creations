@@ -5,10 +5,8 @@ using UnityEngine;
 public class PlayerInteract : MonoBehaviour
 {
     private Camera cam;
-    [SerializeField]
-    private float distance = 3f;
-    [SerializeField]
-    private LayerMask mask;
+    [SerializeField] private float distance = 3f;
+    [SerializeField] private LayerMask mask;
     private PlayerUI playerUI;
     private InputManager inputManager;
     private PlayerState playerState;
@@ -36,23 +34,23 @@ public class PlayerInteract : MonoBehaviour
         // cases for throwing away objects
         if (leftHandRelease && rightHandRelease)
         {
-            if (playerState.leftHand == playerState.rightHand) // if one object is held with both hands
+            if (playerState.leftHandObject == playerState.rightHandObject) // if one object is held with both hands
             {
-                if (playerState.leftHand != null) playerState.leftHand.BaseBothInteract();
+                if (playerState.leftHandObject != null) playerState.leftHandObject.BaseBothInteract();
             }
             else // if object on each hand is different
             {
-                if (playerState.leftHand != null) playerState.leftHand.BaseLeftInteract();
-                if (playerState.rightHand != null) playerState.rightHand.BaseRightInteract();   
+                if (playerState.leftHandObject != null) playerState.leftHandObject.BaseLeftInteract();
+                if (playerState.rightHandObject != null) playerState.rightHandObject.BaseRightInteract();   
             }
         }
-        else if (leftHandRelease && playerState.leftHand != null)
+        else if (leftHandRelease)
         {
-            playerState.leftHand.BaseLeftInteract();
+            if (playerState.leftHandObject != null) playerState.leftHandObject.BaseLeftInteract();
         }
-        else if (rightHandRelease && playerState.rightHand != null)
+        else if (rightHandRelease)
         {
-            playerState.rightHand.BaseRightInteract();
+            if (playerState.rightHandObject != null) playerState.rightHandObject.BaseRightInteract();
         }
 
         // create a ray at the center of the camera, shooting outwards.
@@ -75,15 +73,15 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 // interaction by hands
-                if (leftHandPress && !rightHandPress && playerState.leftHand == null)
+                if (leftHandPress && !rightHandPress && playerState.leftHandObject == null)
                 {
                     interactable.BaseLeftInteract();
                 }
-                else if (!leftHandPress && rightHandPress && playerState.rightHand == null)
+                else if (!leftHandPress && rightHandPress && playerState.rightHandObject == null)
                 {
                     interactable.BaseRightInteract();
                 }
-                else if (leftHandPress && rightHandPress && playerState.leftHand == null && playerState.rightHand == null)
+                else if (leftHandPress && rightHandPress && playerState.leftHandObject == null && playerState.rightHandObject == null)
                 {
                     interactable.BaseBothInteract();
                 }

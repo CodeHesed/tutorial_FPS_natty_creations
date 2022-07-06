@@ -8,9 +8,18 @@ public class target : Interactable
     private GameObject player;
     private Rigidbody rigidBody;
     private string savedPromptMessage;
+    
+    // hyper parameters
+    [SerializeField] private float minSpeed = 0;
+    [SerializeField] private float maxSpeed = 300f;
+    [SerializeField] private float maxDistance = 10f;
 
-    //variables
+
+    // variables
+    private GameObject holdParent = null;
     private bool targetHeld = false;
+    private float currentDist = 0f;
+    private float currentSpeed = 0f;
 
     // Start is called before the first frame update
     void Awake()
@@ -27,14 +36,22 @@ public class target : Interactable
     {
         if (targetHeld)
         {
-            rigidBody.useGravity = false;
-            rigidBody.velocity = Vector3.zero;
+            // linear motion
+            Vector3 displacement = holdParent.transform.position - rigidBody.position;
+            currentDist = displacement.magnitude;
+            currentSpeed = Mathf.SmoothStep(minSpeed, maxSpeed, currentDist / maxDistance);
+            rigidBody.velocity = 100 * displacement.normalized * currentSpeed * Time.fixedDeltaTime;
+            Debug.Log("Current speed = " + currentSpeed);
+            Debug.Log("Displacement.normalized = " + displacement.normalized);
+            Debug.Log("rigidBody.velocity = " + rigidBody.velocity);
+            // rotational motion
             transform.rotation = new Quaternion(0, 0, 0, 0);
+
+            // remove message
             promptMessage = null;
         }
         else
         {
-            rigidBody.useGravity = true;
             promptMessage = savedPromptMessage;
         }
     }
@@ -50,7 +67,7 @@ public class target : Interactable
         {
             if (rigidBody.mass <= playerState.strength)
             {
-                holdObject(player, new List<string>{"left"}, Vector3.forward + Vector3.left);
+                holdObject(player, new List<string>{"left"});
                 Debug.Log(gameObject.name + " held on left hand");
             }
         }
@@ -66,7 +83,7 @@ public class target : Interactable
         {
             if (rigidBody.mass <= playerState.strength)
             {
-                holdObject(player, new List<string>{"right"}, Vector3.forward + Vector3.right);
+                holdObject(player, new List<string>{"right"});
                 Debug.Log(gameObject.name + " held on right hand");
             }
         }
@@ -88,7 +105,7 @@ public class target : Interactable
             {
                 if (rigidBody.mass <= 2*playerState.strength)
                 {
-                    holdObject(player, new List<string>{"left", "right"}, Vector3.forward);
+                    holdObject(player, new List<string>{"left", "right"});
                     Debug.Log(gameObject.name + " held on both hands");
                 }
             }
@@ -101,24 +118,35 @@ public class target : Interactable
     }
 
     // function for holding an object
-    private void holdObject (GameObject player, List<string> hands, Vector3 localPosition)
+    private void holdObject (GameObject player, List<string> hands)
     {
         PlayerState playerState = player.GetComponent<PlayerState>();
-
+        
         // change variables
-        if (hands.Contains("left"))
-        {
-            playerState.leftHand = this;
-        }
-        if (hands.Contains("right"))
-        {
-            playerState.rightHand = this;
-        }
         targetHeld = true;
+        rigidBody.useGravity = false;        
+        if (hands.Count == 2) 
+        {
+            playerState.leftHandObject = this;
+            playerState.rightHandObject = this;
+            holdParent = playerState.bothHand;
+        }
+        else
+        {
+            if (hands.Contains("left"))
+            {
+                playerState.leftHandObject = this;
+                holdParent = playerState.leftHand;
+            }
+            else if (hands.Contains("right"))
+            {
+                playerState.rightHandObject = this;
+                holdParent = playerState.rightHand;
+            }
+        }        
 
         // set initial location
-        transform.SetParent(player.transform);
-        transform.localPosition = localPosition;
+        rigidBody.position = holdParent.transform.position;
         transform.rotation = new Quaternion(0, 0, 0, 0);
     }
     
@@ -128,24 +156,25 @@ public class target : Interactable
         PlayerState playerState = player.GetComponent<PlayerState>();
 
         // change variables
-        if (playerState.leftHand == playerState.rightHand) // for target on both hands
+        targetHeld = false;
+        rigidBody.useGravity = true;
+        if (playerState.leftHandObject == playerState.rightHandObject) // for target on both hands
         {
-            playerState.leftHand = null;
-            playerState.rightHand = null;
+            playerState.leftHandObject = null;
+            playerState.rightHandObject = null;
         }
         if (hands.Contains("left"))
         {
-            playerState.leftHand = null;
+            playerState.leftHandObject = null;
         }
         if (hands.Contains("right"))
         {
-            playerState.rightHand = null;
+            playerState.rightHandObject = null;
         }
-        targetHeld = false;
 
         // apply force - propotional to the number of hands used
         transform.parent = null;
         Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
-        rigidBody.AddForce(forceDirection * hands.Capacity * playerState.strength, ForceMode.Impulse);
+        rigidBody.AddForce(forceDirection * hands.Count * playerState.strength, ForceMode.Impulse);
     }
 }
