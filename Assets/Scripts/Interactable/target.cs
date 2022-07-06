@@ -57,7 +57,7 @@ public class target : Interactable
                 transform.localPosition = Vector3.forward + Vector3.left;
                 transform.rotation = new Quaternion(0, 0, 0, 0);
 
-                Debug.Log(gameObject.name + "held on left hand");
+                Debug.Log(gameObject.name + " held on left hand");
             }
         }
         else // throw
@@ -75,7 +75,7 @@ public class target : Interactable
             Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
             rigidBody.AddForce(forceDirection * playerState.strength, ForceMode.Impulse);
 
-            Debug.Log(gameObject.name + "thrown away from left hand");            
+            Debug.Log(gameObject.name + " thrown away from left hand");            
         }
     }
     protected override void RightInteract()
@@ -93,7 +93,7 @@ public class target : Interactable
                 transform.localPosition = Vector3.forward + Vector3.right;
                 transform.rotation = new Quaternion(0, 0, 0, 0);
 
-                Debug.Log(gameObject.name + "held on right hand");
+                Debug.Log(gameObject.name + " held on right hand");
             }
         }
         else // throw
@@ -111,37 +111,54 @@ public class target : Interactable
             Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
             rigidBody.AddForce(forceDirection * playerState.strength, ForceMode.Impulse);
 
-            Debug.Log(gameObject.name + "thrown away from right hand");
+            Debug.Log(gameObject.name + " thrown away from right hand");
         }
     }
     protected override void BothInteract()
     {        
         if (rigidBody.mass <= playerState.strength) // for targets that are light enough
         {
-            if (playerState.leftObject = null)
+            if (playerState.leftObject == null)
             {
                 LeftInteract();
             }
-            else if (playerState.rightObject = null)
+            else if (playerState.rightObject == null)
             {
                 RightInteract();
             }
         }
         else
         {
-            if (!targetHeld && rigidBody.mass <= 2*playerState.strength) // hold
+            if (!targetHeld) // hold
+            {
+                if (rigidBody.mass <= 2*playerState.strength)
+                {
+                    // change variables
+                    playerState.leftObject = this;
+                    playerState.rightObject = this;
+                    targetHeld = true;
+                    
+                    // set initial location
+                    transform.SetParent(player.transform);
+                    transform.localPosition = Vector3.forward;
+                    transform.rotation = new Quaternion(0, 0, 0, 0);
+
+                    Debug.Log(gameObject.name + " held on both hands");
+                }
+            }
+            else
             {
                 // change variables
-                playerState.leftObject = this;
-                playerState.rightObject = this;
-                targetHeld = true;
-                
-                // set initial location
-                transform.SetParent(player.transform);
-                transform.localPosition = Vector3.forward;
-                transform.rotation = new Quaternion(0, 0, 0, 0);
+                playerState.leftObject = null;
+                playerState.rightObject = null;
+                targetHeld = false;
 
-                Debug.Log(gameObject.name + "held on both hand");
+                // set initial veloctiy
+                transform.parent = null;
+                Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
+                rigidBody.AddForce(forceDirection * 2*playerState.strength, ForceMode.Impulse);
+
+                Debug.Log(gameObject.name + " thrown away from both hands");
             }
         }                 
     }

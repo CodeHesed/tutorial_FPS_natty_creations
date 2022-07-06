@@ -33,11 +33,32 @@ public class PlayerInteract : MonoBehaviour
         
 
         // cases for throwing away objects
-        if (leftHandTriggered && playerState.leftObject != null)
+        if (leftHandTriggered && rightHandTriggered)
+        {
+            if (playerState.leftObject != playerState.rightObject) // if object on each hand is different
+            {
+                if (playerState.leftObject != null)
+                {
+                    playerState.leftObject.BaseLeftInteract();
+                }
+                if (playerState.rightObject != null)
+                {
+                    playerState.rightObject.BaseRightInteract();
+                }
+            }
+            else // if one object is held with both hands
+            {
+                if (playerState.leftObject != null)
+                {
+                    playerState.leftObject.BaseBothInteract();
+                }
+            }
+        }
+        else if (leftHandTriggered && playerState.leftObject != null)
         {
             playerState.leftObject.BaseLeftInteract();
         }
-        if (rightHandTriggered && playerState.rightObject != null)
+        else if (rightHandTriggered && playerState.rightObject != null)
         {
             playerState.rightObject.BaseRightInteract();
         }
