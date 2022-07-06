@@ -141,7 +141,7 @@ public class target : Interactable
         {
             playerState.rightObject = null;
         }
-        targetHeld = true;
+        targetHeld = false;
 
         // apply force - propotional to the number of hands used
         transform.parent = null;
