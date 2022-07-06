@@ -28,8 +28,10 @@ public class PlayerInteract : MonoBehaviour
         playerUI.UpdateText(string.Empty);
 
         bool interactTriggered = inputManager.onFoot.Interact.triggered;
-        bool leftHandTriggered = inputManager.onFoot.LeftHand.triggered;
-        bool rightHandTriggered = inputManager.onFoot.RightHand.triggered;
+        bool leftHandPress = inputManager.onFoot.LeftHandPress.triggered;
+        bool rightHandPress = inputManager.onFoot.RightHandPress.triggered;
+        bool leftHandRelease = inputManager.onFoot.LeftHandRelease.triggered;
+        bool rightHandRelease = inputManager.onFoot.RightHandRelease.triggered;
         
         // variable to avoid holding back a thrown object on the same frame
         bool objectThrown = false;
