@@ -11,7 +11,7 @@ public class target : Interactable
 
     //variables
     private bool targetHeld = false;
-    
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -50,34 +50,14 @@ public class target : Interactable
         {
             if (rigidBody.mass <= playerState.strength)
             {
-                // change variables
-                playerState.leftObject = this;
-                targetHeld = true;
-                
-                // set initial location
-                transform.SetParent(player.transform);
-                transform.localPosition = Vector3.forward + Vector3.left;
-                transform.rotation = new Quaternion(0, 0, 0, 0);
-
+                holdObject(player, new List<string>{"left"}, Vector3.forward + Vector3.left);
                 Debug.Log(gameObject.name + " held on left hand");
             }
         }
         else // throw
         {
-            // change variables
-            if (playerState.leftObject == playerState.rightObject) // for target on both hands
-            {
-                playerState.rightObject = null;
-            }
-            playerState.leftObject = null;
-            targetHeld = false;
-
-            // set initial veloctiy
-            transform.parent = null;
-            Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
-            rigidBody.AddForce(forceDirection * playerState.strength, ForceMode.Impulse);
-
-            Debug.Log(gameObject.name + " thrown away from left hand");            
+            throwObject(player, new List<string>{"left"});
+            Debug.Log(gameObject.name + " thrown away by left hand");            
         }
     }
     protected override void RightInteract()
@@ -86,39 +66,19 @@ public class target : Interactable
         {
             if (rigidBody.mass <= playerState.strength)
             {
-                // change variables
-                playerState.rightObject = this;
-                targetHeld = true;
-                
-                // set initial location
-                transform.SetParent(player.transform);
-                transform.localPosition = Vector3.forward + Vector3.right;
-                transform.rotation = new Quaternion(0, 0, 0, 0);
-
+                holdObject(player, new List<string>{"right"}, Vector3.forward + Vector3.right);
                 Debug.Log(gameObject.name + " held on right hand");
             }
         }
         else // throw
         {
-            // change variables
-            if (playerState.leftObject == playerState.rightObject) // for target on both hands
-            {
-                playerState.leftObject = null;
-            }
-            playerState.rightObject = null;
-            targetHeld = false;
-
-            // set initial veloctiy
-            transform.parent = null;
-            Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
-            rigidBody.AddForce(forceDirection * playerState.strength, ForceMode.Impulse);
-
-            Debug.Log(gameObject.name + " thrown away from right hand");
+            throwObject(player, new List<string>{"right"});
+            Debug.Log(gameObject.name + " thrown away by right hand");
         }
     }
     protected override void BothInteract()
     {        
-        if (rigidBody.mass <= playerState.strength) // for targets that are light enough
+        if (rigidBody.mass <= playerState.strength) // for targets that are light enough, use only one hand
         {
             if (playerState.leftObject == null)
             {
@@ -135,34 +95,64 @@ public class target : Interactable
             {
                 if (rigidBody.mass <= 2*playerState.strength)
                 {
-                    // change variables
-                    playerState.leftObject = this;
-                    playerState.rightObject = this;
-                    targetHeld = true;
-                    
-                    // set initial location
-                    transform.SetParent(player.transform);
-                    transform.localPosition = Vector3.forward;
-                    transform.rotation = new Quaternion(0, 0, 0, 0);
-
+                    holdObject(player, new List<string>{"left", "right"}, Vector3.forward);
                     Debug.Log(gameObject.name + " held on both hands");
                 }
             }
-            else
+            else // throw
             {
-                // change variables
-                playerState.leftObject = null;
-                playerState.rightObject = null;
-                targetHeld = false;
-
-                // set initial veloctiy
-                transform.parent = null;
-                Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
-                rigidBody.AddForce(forceDirection * 2*playerState.strength, ForceMode.Impulse);
-
-                Debug.Log(gameObject.name + " thrown away from both hands");
+                throwObject(player, new List<string>{"left", "right"});
+                Debug.Log(gameObject.name + " thrown away by both hands");
             }
         }                 
     }
+
+    // function for holding an object
+    private void holdObject (GameObject player, List<string> hands, Vector3 localPosition)
+    {
+        PlayerState playerState = player.GetComponent<PlayerState>();
+
+        // change variables
+        if (hands.Contains("left"))
+        {
+            playerState.leftObject = this;
+        }
+        if (hands.Contains("right"))
+        {
+            playerState.rightObject = this;
+        }
+        targetHeld = true;
+
+        // set initial location
+        transform.SetParent(player.transform);
+        transform.localPosition = localPosition;
+        transform.rotation = new Quaternion(0, 0, 0, 0);
+    }
     
+    // function for throwing an object
+    private void throwObject (GameObject player, List<string> hands)
+    {
+        PlayerState playerState = player.GetComponent<PlayerState>();
+
+        // change variables
+        if (playerState.leftObject == playerState.rightObject) // for target on both hands
+        {
+            playerState.leftObject = null;
+            playerState.rightObject = null;
+        }
+        if (hands.Contains("left"))
+        {
+            playerState.leftObject = null;
+        }
+        if (hands.Contains("right"))
+        {
+            playerState.rightObject = null;
+        }
+        targetHeld = true;
+
+        // apply force - propotional to the number of hands used
+        transform.parent = null;
+        Vector3 forceDirection = player.GetComponent<PlayerLook>().cam.transform.forward;
+        rigidBody.AddForce(forceDirection * hands.Capacity * playerState.strength, ForceMode.Impulse);
+    }
 }
