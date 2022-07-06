@@ -78,16 +78,9 @@ public class target : Interactable
     }
     protected override void BothInteract()
     {        
-        if (rigidBody.mass <= playerState.strength) // for targets that are light enough, use only one hand
+        if (rigidBody.mass <= playerState.strength) // for targets that are light enough, use only left hand
         {
-            if (playerState.leftObject == null)
-            {
-                LeftInteract();
-            }
-            else if (playerState.rightObject == null)
-            {
-                RightInteract();
-            }
+            LeftInteract();
         }
         else
         {
