@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerState : MonoBehaviour
 {
-    public Interactable rightObject;
-    public Interactable leftObject;
+    public Interactable rightHand;
+    public Interactable leftHand;
     public float strength = 5f;
 }

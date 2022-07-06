@@ -108,11 +108,11 @@ public class target : Interactable
         // change variables
         if (hands.Contains("left"))
         {
-            playerState.leftObject = this;
+            playerState.leftHand = this;
         }
         if (hands.Contains("right"))
         {
-            playerState.rightObject = this;
+            playerState.rightHand = this;
         }
         targetHeld = true;
 
@@ -128,18 +128,18 @@ public class target : Interactable
         PlayerState playerState = player.GetComponent<PlayerState>();
 
         // change variables
-        if (playerState.leftObject == playerState.rightObject) // for target on both hands
+        if (playerState.leftHand == playerState.rightHand) // for target on both hands
         {
-            playerState.leftObject = null;
-            playerState.rightObject = null;
+            playerState.leftHand = null;
+            playerState.rightHand = null;
         }
         if (hands.Contains("left"))
         {
-            playerState.leftObject = null;
+            playerState.leftHand = null;
         }
         if (hands.Contains("right"))
         {
-            playerState.rightObject = null;
+            playerState.rightHand = null;
         }
         targetHeld = false;
 

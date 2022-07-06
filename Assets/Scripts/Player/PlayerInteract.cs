@@ -32,44 +32,27 @@ public class PlayerInteract : MonoBehaviour
         bool rightHandPress = inputManager.onFoot.RightHandPress.triggered;
         bool leftHandRelease = inputManager.onFoot.LeftHandRelease.triggered;
         bool rightHandRelease = inputManager.onFoot.RightHandRelease.triggered;
-        
-        // variable to avoid holding back a thrown object on the same frame
-        bool objectThrown = false;
 
         // cases for throwing away objects
-        if (leftHandTriggered && rightHandTriggered)
+        if (leftHandRelease && rightHandRelease)
         {
-            if (playerState.leftObject != playerState.rightObject) // if object on each hand is different
+            if (playerState.leftHand == playerState.rightHand) // if one object is held with both hands
             {
-                if (playerState.leftObject != null)
-                {
-                    playerState.leftObject.BaseLeftInteract();
-                    objectThrown = true;
-                }
-                if (playerState.rightObject != null)
-                {
-                    playerState.rightObject.BaseRightInteract();
-                    objectThrown = true;
-                }
+                if (playerState.leftHand != null) playerState.leftHand.BaseBothInteract();
             }
-            else // if one object is held with both hands
+            else // if object on each hand is different
             {
-                if (playerState.leftObject != null)
-                {
-                    playerState.leftObject.BaseBothInteract();
-                    objectThrown = true;
-                }
+                if (playerState.leftHand != null) playerState.leftHand.BaseLeftInteract();
+                if (playerState.rightHand != null) playerState.rightHand.BaseRightInteract();   
             }
         }
-        else if (leftHandTriggered && playerState.leftObject != null)
+        else if (leftHandRelease && playerState.leftHand != null)
         {
-            playerState.leftObject.BaseLeftInteract();
-            objectThrown = true;
+            playerState.leftHand.BaseLeftInteract();
         }
-        else if (rightHandTriggered && playerState.rightObject != null)
+        else if (rightHandRelease && playerState.rightHand != null)
         {
-            playerState.rightObject.BaseRightInteract();
-            objectThrown = true;
+            playerState.rightHand.BaseRightInteract();
         }
 
         // create a ray at the center of the camera, shooting outwards.
@@ -92,21 +75,19 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 // interaction by hands
-                if (!objectThrown)
+                if (leftHandPress && !rightHandPress && playerState.leftHand == null)
                 {
-                    if (leftHandTriggered && !rightHandTriggered && playerState.leftObject == null)
-                    {
-                        interactable.BaseLeftInteract();
-                    }
-                    else if (!leftHandTriggered && rightHandTriggered && playerState.rightObject == null)
-                    {
-                        interactable.BaseRightInteract();
-                    }
-                    else if (leftHandTriggered && rightHandTriggered && playerState.leftObject == null && playerState.rightObject == null)
-                    {
-                        interactable.BaseBothInteract();
-                    }
+                    interactable.BaseLeftInteract();
                 }
+                else if (!leftHandPress && rightHandPress && playerState.rightHand == null)
+                {
+                    interactable.BaseRightInteract();
+                }
+                else if (leftHandPress && rightHandPress && playerState.leftHand == null && playerState.rightHand == null)
+                {
+                    interactable.BaseBothInteract();
+                }
+                
             }
         }
 

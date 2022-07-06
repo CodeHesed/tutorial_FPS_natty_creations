@@ -42,21 +42,39 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "LeftHand",
+                    "name": "LeftHandPress",
                     "type": "Button",
                     "id": "c3cbfbe8-b2da-45d8-a543-acd34e8ab34d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "Press",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "RightHand",
+                    "name": "LeftHandRelease",
+                    "type": "Button",
+                    "id": "cdb36c03-ed6e-43e7-8717-f6f80d85ae2e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightHandPress",
                     "type": "Button",
                     "id": "9b5eb031-27f8-4082-825d-b1a081d4ecca",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightHandRelease",
+                    "type": "Button",
+                    "id": "2e27ecfa-8f49-4b22-9bc5-f403a6844778",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
                     "initialStateCheck": false
                 }
             ],
@@ -156,7 +174,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "LeftHand",
+                    "action": "LeftHandPress",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -167,7 +185,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RightHand",
+                    "action": "RightHandPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "216e8a30-1c04-4443-96d8-9cc1782db518",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftHandRelease",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ec544d6-af6e-4a63-9ced-0bfb75da29d7",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightHandRelease",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
