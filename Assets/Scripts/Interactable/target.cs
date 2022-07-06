@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class target : Interactable
 {
-    public bool targetHeld = false;
     private PlayerState playerState;
     private GameObject player;
     private Rigidbody rigidBody;
     private string savedPromptMessage;
 
+    //variables
+    private bool targetHeld = false;
+    
     // Start is called before the first frame update
     void Awake()
     {

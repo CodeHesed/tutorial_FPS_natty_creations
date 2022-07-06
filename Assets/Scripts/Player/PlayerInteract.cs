@@ -31,6 +31,8 @@ public class PlayerInteract : MonoBehaviour
         bool leftHandTriggered = inputManager.onFoot.LeftHand.triggered;
         bool rightHandTriggered = inputManager.onFoot.RightHand.triggered;
         
+        // variable to avoid holding back a thrown object on the same frame
+        bool objectThrown = false;
 
         // cases for throwing away objects
         if (leftHandTriggered && rightHandTriggered)
@@ -40,10 +42,12 @@ public class PlayerInteract : MonoBehaviour
                 if (playerState.leftObject != null)
                 {
                     playerState.leftObject.BaseLeftInteract();
+                    objectThrown = true;
                 }
                 if (playerState.rightObject != null)
                 {
                     playerState.rightObject.BaseRightInteract();
+                    objectThrown = true;
                 }
             }
             else // if one object is held with both hands
@@ -51,16 +55,19 @@ public class PlayerInteract : MonoBehaviour
                 if (playerState.leftObject != null)
                 {
                     playerState.leftObject.BaseBothInteract();
+                    objectThrown = true;
                 }
             }
         }
         else if (leftHandTriggered && playerState.leftObject != null)
         {
             playerState.leftObject.BaseLeftInteract();
+            objectThrown = true;
         }
         else if (rightHandTriggered && playerState.rightObject != null)
         {
             playerState.rightObject.BaseRightInteract();
+            objectThrown = true;
         }
 
         // create a ray at the center of the camera, shooting outwards.
@@ -82,22 +89,24 @@ public class PlayerInteract : MonoBehaviour
                     interactable.BaseInteract();
                 }
 
-
                 // interaction by hands
-                if (leftHandTriggered && !rightHandTriggered && playerState.leftObject == null)
+                if (!objectThrown)
                 {
-                    interactable.BaseLeftInteract();
-                }
-                else if (!leftHandTriggered && rightHandTriggered && playerState.rightObject == null)
-                {
-                    interactable.BaseRightInteract();
-                }
-                else if (leftHandTriggered && rightHandTriggered && playerState.leftObject == null && playerState.rightObject == null)
-                {
-                    interactable.BaseBothInteract();
+                    if (leftHandTriggered && !rightHandTriggered && playerState.leftObject == null)
+                    {
+                        interactable.BaseLeftInteract();
+                    }
+                    else if (!leftHandTriggered && rightHandTriggered && playerState.rightObject == null)
+                    {
+                        interactable.BaseRightInteract();
+                    }
+                    else if (leftHandTriggered && rightHandTriggered && playerState.leftObject == null && playerState.rightObject == null)
+                    {
+                        interactable.BaseBothInteract();
+                    }
                 }
             }
         }
-        
+
     }
 }
