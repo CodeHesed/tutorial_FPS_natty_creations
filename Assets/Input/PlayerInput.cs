@@ -98,6 +98,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=1)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Map"",
+                    ""type"": ""Button"",
+                    ""id"": ""d866e984-50f8-44dd-b08a-ee36cee9802a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -230,6 +239,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RightHandRelease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01df2509-0588-48a3-ae8f-84b18637d4e5"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Map"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -764,6 +784,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_OnFoot_LeftHandRelease = m_OnFoot.FindAction("LeftHandRelease", throwIfNotFound: true);
         m_OnFoot_RightHandPress = m_OnFoot.FindAction("RightHandPress", throwIfNotFound: true);
         m_OnFoot_RightHandRelease = m_OnFoot.FindAction("RightHandRelease", throwIfNotFound: true);
+        m_OnFoot_Map = m_OnFoot.FindAction("Map", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -843,6 +864,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_LeftHandRelease;
     private readonly InputAction m_OnFoot_RightHandPress;
     private readonly InputAction m_OnFoot_RightHandRelease;
+    private readonly InputAction m_OnFoot_Map;
     public struct OnFootActions
     {
         private @PlayerInput m_Wrapper;
@@ -855,6 +877,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @LeftHandRelease => m_Wrapper.m_OnFoot_LeftHandRelease;
         public InputAction @RightHandPress => m_Wrapper.m_OnFoot_RightHandPress;
         public InputAction @RightHandRelease => m_Wrapper.m_OnFoot_RightHandRelease;
+        public InputAction @Map => m_Wrapper.m_OnFoot_Map;
         public InputActionMap Get() { return m_Wrapper.m_OnFoot; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -888,6 +911,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @RightHandRelease.started -= m_Wrapper.m_OnFootActionsCallbackInterface.OnRightHandRelease;
                 @RightHandRelease.performed -= m_Wrapper.m_OnFootActionsCallbackInterface.OnRightHandRelease;
                 @RightHandRelease.canceled -= m_Wrapper.m_OnFootActionsCallbackInterface.OnRightHandRelease;
+                @Map.started -= m_Wrapper.m_OnFootActionsCallbackInterface.OnMap;
+                @Map.performed -= m_Wrapper.m_OnFootActionsCallbackInterface.OnMap;
+                @Map.canceled -= m_Wrapper.m_OnFootActionsCallbackInterface.OnMap;
             }
             m_Wrapper.m_OnFootActionsCallbackInterface = instance;
             if (instance != null)
@@ -916,6 +942,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @RightHandRelease.started += instance.OnRightHandRelease;
                 @RightHandRelease.performed += instance.OnRightHandRelease;
                 @RightHandRelease.canceled += instance.OnRightHandRelease;
+                @Map.started += instance.OnMap;
+                @Map.performed += instance.OnMap;
+                @Map.canceled += instance.OnMap;
             }
         }
     }
@@ -1035,6 +1064,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnLeftHandRelease(InputAction.CallbackContext context);
         void OnRightHandPress(InputAction.CallbackContext context);
         void OnRightHandRelease(InputAction.CallbackContext context);
+        void OnMap(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
